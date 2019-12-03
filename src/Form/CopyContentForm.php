@@ -37,9 +37,33 @@ class CopyContentForm extends FormBase {
     $form['#tree'] = TRUE;
     $form['url'] = [
       '#type' => 'url',
-      '#title' => $this->t('Target URL'),
+      '#title' => t('Target URL'),
       '#description' => t('Copy-paste the full URL of the page for the content that you want to copy.'),
       '#required' => TRUE,
+    ];
+    $form['with_paragraphs'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Paragraphs?'),
+      '#attributes' => [
+        'title' => t('Do you want paragraphs references to be included? (if there are available)'),
+        'checked' => 'checked'
+      ],
+      '#prefix' => '<br /><h5>Including:</h5>',
+    ];
+    $form['with_images'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Images?'),
+      '#attributes' => [
+        'title' => t('Do you want images to be included? (if there are available)'),
+        'checked' => 'checked'
+      ],
+    ];
+    $form['with_tags'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Tags?'),
+      '#attributes' => [
+        'title' => t('Do you want tags to be included? (if there are available)'),
+      ],
     ];
     $form['actions'] = [
       '#type' => 'actions',
@@ -57,8 +81,14 @@ class CopyContentForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $url_target = $form_state->getValue('url');
+    $with_paragraphs = $form_state->getValue('with_paragraphs');
+    $with_images = $form_state->getValue('with_images');
+    $with_tags = $form_state->getValue('with_tags');
     $url = Url::fromRoute('copy_content.import', [
       'path' => $url_target,
+      'with_paragraphs' => $with_paragraphs,
+      'with_images' => $with_images,
+      'with_tags' => $with_tags,
     ]);
     $form_state->setRedirectUrl($url);
   }

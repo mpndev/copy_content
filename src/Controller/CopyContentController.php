@@ -38,6 +38,10 @@ class CopyContentController extends ControllerBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   private function handleEntitiesOnExport($entity, &$content) {
+    $with_paragraphs = \Drupal::request()->query->get('with_paragraphs');
+    $with_images = \Drupal::request()->query->get('with_images');
+    $with_tags = \Drupal::request()->query->get('with_tags');
+
     foreach ($entity->toArray() as $key => $field) {
       if (!$entity->get($key)->isEmpty()) {
         $entity_field_values = $entity->get($key)->getValue();
@@ -45,15 +49,25 @@ class CopyContentController extends ControllerBase {
           foreach ($entity_field_value as $value_name => $value) {
             $field_definition = $entity->get($key)->getFieldDefinition();
             if ($field_definition->getType() === 'entity_reference_revisions') {
-              $target_type = $field_definition->getItemDefinition()->getSetting('target_type');
-              $target = \Drupal::entityTypeManager()->getStorage($target_type)->load($entity_field_value['target_id']);
-              $this->handleEntitiesOnExport($target, $content[$key][$delta]);
+              if ($with_paragraphs) {
+                $target_type = $field_definition->getItemDefinition()->getSetting('target_type');
+                $target = \Drupal::entityTypeManager()->getStorage($target_type)->load($entity_field_value['target_id']);
+                $this->handleEntitiesOnExport($target, $content[$key][$delta]);
+              }
+              else {
+                unset($content[$key]);
+              }
             }
             else {
-              if ($entity_field_value['alt'] && $value_name === 'target_id') {
-                $content[$key]['url'] = file_create_url($entity->get($key)->entity->getFileUri());
-              }
               $content[$key][$value_name] = $value;
+              if ($field_definition->getType() === 'image') {
+                if ($with_images) {
+                  $content[$key]['url'] = file_create_url($entity->get($key)->entity->getFileUri());
+                }
+                else {
+                  unset($content[$key]);
+                }
+              }
             }
           }
         }
@@ -76,11 +90,15 @@ class CopyContentController extends ControllerBase {
    */
   public function import() {
     $path = \Drupal::request()->query->get('path');
+    $with_paragraphs = \Drupal::request()->query->get('with_paragraphs');
+    $with_images = \Drupal::request()->query->get('with_images');
+    $with_tags = \Drupal::request()->query->get('with_tags');
+
     $url_parsed = parse_url($path);
     $export_path = '';
     if (!empty($url_parsed['path'])) {
       if (!empty($url_parsed['scheme']) && !empty($url_parsed['host'])) {
-        $export_path = $url_parsed['scheme'] . '://' . $url_parsed['host'] . '/admin/content/export?path=' . $url_parsed['path'];
+        $export_path = $url_parsed['scheme'] . '://' . $url_parsed['host'] . '/admin/content/export?path=' . $url_parsed['path'] . '&with_paragraphs=' . $with_paragraphs . '&with_images=' . $with_images . '&with_tags=' . $with_tags;
       }
       else {
         $host = \Drupal::request()->getSchemeAndHttpHost();
@@ -108,6 +126,8 @@ class CopyContentController extends ControllerBase {
   /**
    * @param $entity
    * @param $fields
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   private function handleEntitiesOnImport(&$entity, $fields) {
     foreach ($fields as $key => $field) {
