@@ -40,7 +40,6 @@ class CopyContentController extends ControllerBase {
   private function handleEntitiesOnExport($entity, &$content) {
     $with_paragraphs = \Drupal::request()->query->get('with_paragraphs');
     $with_images = \Drupal::request()->query->get('with_images');
-    $with_tags = \Drupal::request()->query->get('with_tags');
 
     foreach ($entity->toArray() as $key => $field) {
       if (!$entity->get($key)->isEmpty()) {
@@ -92,13 +91,12 @@ class CopyContentController extends ControllerBase {
     $path = \Drupal::request()->query->get('path');
     $with_paragraphs = \Drupal::request()->query->get('with_paragraphs');
     $with_images = \Drupal::request()->query->get('with_images');
-    $with_tags = \Drupal::request()->query->get('with_tags');
 
     $url_parsed = parse_url($path);
     $export_path = '';
     if (!empty($url_parsed['path'])) {
       if (!empty($url_parsed['scheme']) && !empty($url_parsed['host'])) {
-        $export_path = $url_parsed['scheme'] . '://' . $url_parsed['host'] . '/admin/content/export?path=' . $url_parsed['path'] . '&with_paragraphs=' . $with_paragraphs . '&with_images=' . $with_images . '&with_tags=' . $with_tags;
+        $export_path = $url_parsed['scheme'] . '://' . $url_parsed['host'] . '/admin/content/export?path=' . $url_parsed['path'] . '&with_paragraphs=' . $with_paragraphs . '&with_images=' . $with_images;
       }
       else {
         $host = \Drupal::request()->getSchemeAndHttpHost();

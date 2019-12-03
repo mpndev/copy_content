@@ -58,13 +58,6 @@ class CopyContentForm extends FormBase {
         'checked' => 'checked'
       ],
     ];
-    $form['with_tags'] = [
-      '#type' => 'checkbox',
-      '#title' => t('Tags?'),
-      '#attributes' => [
-        'title' => t('Do you want tags to be included? (if there are available)'),
-      ],
-    ];
     $form['actions'] = [
       '#type' => 'actions',
       'clone' => [
@@ -88,7 +81,6 @@ class CopyContentForm extends FormBase {
       'path' => $url_target,
       'with_paragraphs' => $with_paragraphs,
       'with_images' => $with_images,
-      'with_tags' => $with_tags,
     ]);
     $form_state->setRedirectUrl($url);
   }
