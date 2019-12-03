@@ -1,0 +1,24 @@
+copy_content.import:
+  path: '/admin/content/import'
+  defaults:
+    _controller: 'Drupal\copy_content\Controller\CopyContentController::import'
+    _title: 'Import content'
+  requirements:
+    _permission: 'administer site configuration'
+
+copy_content.export:
+  path: '/admin/content/export'
+  defaults:
+    _controller: 'Drupal\copy_content\Controller\CopyContentController::export'
+    _title: 'Export content'
+  methods: [GET]
+  requirements:
+    _permission: 'access content'
+
+copy_content.copy_content:
+  path: '/admin/content/copy_content'
+  defaults:
+    _form: 'Drupal\copy_content\Form\CopyContentForm'
+    _title: 'Copy Content'
+  requirements:
+    _permission: 'administer site configuration'

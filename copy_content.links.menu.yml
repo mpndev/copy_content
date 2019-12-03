@@ -1,0 +1,6 @@
+copy_content_copy_content:
+  title: 'Copy Content'
+  description: 'Copy Content'
+  parent: system.admin_content
+  route_name: copy_content.copy_content
+  weight: 100

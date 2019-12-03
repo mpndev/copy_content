@@ -1,0 +1,5 @@
+copy_content.copy_content:
+  route_name: copy_content.copy_content
+  title: 'Copy content'
+  appears_on:
+    - system.admin_content

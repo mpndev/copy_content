@@ -1,0 +1,4 @@
+copy_content.copy_content:
+  title: Copy Content
+  route_name: copy_content.copy_content
+  base_route: system.admin_content

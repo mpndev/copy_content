@@ -1,0 +1,29 @@
+<?php
+
+use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_entity_operation().
+ */
+function copy_content_entity_operation(EntityInterface $entity) {
+  $operations = [];
+
+  // Only add an operation for node entities.
+  if ($entity->getEntityTypeId() !== 'node') {
+    return $operations;
+  }
+
+  $path = '/admin/content/import?path=' . $entity->toUrl()->toString();
+  $operations['copy_content'] = [
+    'title' => t('Copy content'),
+    'weight' => '100',
+    'url' => Url::fromUri('internal:/' . trim($path, '/'), [
+      'query' => [
+        'type' => 'content',
+      ]
+    ]),
+  ];
+
+  return $operations;
+}
