@@ -140,7 +140,6 @@ class CopyContentController extends ControllerBase {
           $namespace_entities = 'Drupal\paragraphs\Entity\\';
           $inner_entity = ($namespace_entities . ucfirst($target_type))::create(['type' => $target_id]);
 
-          $inner_entity->save();
           $this->handleEntitiesOnImport($inner_entity, $inner_field_data);
           $entity->get($key)->appendItem($inner_entity);
         }
