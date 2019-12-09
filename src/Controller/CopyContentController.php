@@ -17,9 +17,16 @@ class CopyContentController extends ControllerBase {
     $content = [];
     try {
       $path = \Drupal::request()->query->get('path');
-      $params = Url::fromUri("internal:" . $path)->getRouteParameters();
-      $entity_type = key($params);
-      $node = Node::load($params[$entity_type]);
+      $path = \Drupal::service('path.alias_manager')->getPathByAlias($path);
+      if(preg_match('/node\/(\d+)/', $path, $matches)) {
+        $entity_id = $matches[1];
+      }
+      else {
+        $params = Url::fromUri("internal:" . $path)->getRouteParameters();
+        $entity_type = key($params);
+        $entity_id = $params[$entity_type];
+      }
+      $node = Node::load($entity_id);
       $this->handleDispatchExport($node, $content, (new \ReflectionClass($node))->getName(), $node->bundle());
       $this->removeBadFields($content);
     }
